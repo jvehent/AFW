@@ -57,6 +57,7 @@ COMMIT
 <% end -%>
 <% #build the list of chains, one per user
 node[:afw][:chains].sort_by{|k,v| k}.each do |user,params| -%>
+
 :<%=user%> - [0:0]
 -A OUTPUT -m owner --uid-owner <%=params[:uid]%> -m state --state NEW -j <%=user%>
 <%
@@ -74,19 +75,23 @@ node[:afw][:chains].sort_by{|k,v| k}.each do |user,params| -%>
 <%
 end
 -%>
+
 <% node[:afw][:tables][:filter][:rules].each do |rule| -%>
 <%=rule%>
 <% end -%>
+
 <% if node[:afw][:enable_input_drop_log] -%>
 -A INPUT -j LOG --log-prefix "DROP_AFW_INPUT " --log-uid --log-tcp-sequence
 <% end -%>
 <% if node[:afw][:enable_input_drop] -%>
 -A INPUT -j DROP
 <% end -%>
+
 <% if node[:afw][:enable_output_drop_log] -%>
 -A OUTPUT -j LOG --log-prefix "DROP_AFW_OUTPUT " --log-uid --log-tcp-sequence
 <% end -%>
 <% if node[:afw][:enable_output_drop] -%>
 -A OUTPUT -j DROP
+
 <% end -%>
 COMMIT
