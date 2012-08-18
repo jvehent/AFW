@@ -244,16 +244,16 @@ def build_rule_array(iptables_header, sources, destinations)
     destinations.each do |this_dest|
       iptables_array_source.each do |iptables_source|
         iptables_array_destination.push(
-          "#{iptables_source} -d #{this_dest} -m state --state NEW -j ACCEPT"
+          "#{iptables_source} -d #{this_dest} -m conntrack --ctstate NEW -j ACCEPT"
         )
       end
     end
   else
     iptables_array_source.each do |iptables_source|
       iptables_array_destination.push(
-        "#{iptables_source} -m state --state NEW -j ACCEPT"
+        "#{iptables_source} -m conntrack --ctstate NEW -j ACCEPT"
       )
-      log("AFW: building rule '#{iptables_source} -m state --state NEW -j ACCEPT'")
+      log("AFW: building rule '#{iptables_source} -m conntrack --ctstate NEW -j ACCEPT'")
     end
   end
 

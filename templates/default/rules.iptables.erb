@@ -46,8 +46,8 @@ COMMIT
 :OUTPUT ACCEPT [0:0]
 -A INPUT -i lo -j ACCEPT
 -A OUTPUT -o lo -j ACCEPT
--A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
--A OUTPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+-A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+-A OUTPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 # some default rules we want to open everywhere
 -A INPUT -p tcp --dport 22 -s 10.0.0.0/8 -j ACCEPT
 -A INPUT -p tcp --dport 22 -s 172.30.0.0/16 -j ACCEPT
