@@ -16,13 +16,16 @@ Rules must be added in roles or nodes attributes. A typical rule looks like:
 ```
 :afw =>
   :rules =>
-    "SIP Trunk Ports (UDP) - VoicePulse Secondary" =>
+    'MongoDB App Entry Point' => {
+      :protocol => 'tcp',
       :direction => 'in',
       :interface => 'default',
-      :protocol => 'udp',
-      :user => 'asterisk',
-      :source => '209.31.18.12',
-      :port => '10000:20000'
+      :user => 'mongodb',
+      :source => ['(roles:*nodejs-app-node OR roles:*python-worker-node OR roles:*python-api-node) AND SAMETAG',
+                  '10.4.76.2',
+                  'backup-server.example.net']
+      :dport => '27017'
+    },
 }
 
 ```
