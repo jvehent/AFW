@@ -2,14 +2,14 @@
 # Cookbook Name:: afw
 # Recipe:: cloudstack-agent
 #
-# Copyright 2012, AWeber, Julien Vehent
+# Copyright 2012, AWeber
 #
-# See LICENSE in README file
+# All rights reserved - Do Not Redistribute
 #
 
 def insert_rule_into_table(rule, nftable)
   if rule =~ /^-(A|I)/ and rule =~ /-j/
-    node[:afw][:tables][nftable][:rules] << rule.chomp
+    node['afw']['tables'][nftable]['rules'] << rule.chomp
     log("AFW::Cloudstack-agent: Preserving rule '#{rule.chomp}'")
   end
 end
@@ -41,9 +41,9 @@ end
     chain_str = line.split.first
     chain = chain_str[1,30]
     log("AFW::Cloudstack-agent: Evaluating chain '#{chain}'")
-    if not (nftable.eql?('filter') and node[:afw][:chains].include?(chain)) \
+    if not (nftable.eql?('filter') and node['afw']['chains'].include?(chain)) \
        and not (chain =~ /INPUT|OUTPUT|FORWARD|PREROUTING|POSTROUTING/)
-      node[:afw][:tables][nftable][:chains] << line.chomp
+      node['afw']['tables'][nftable]['chains'] << line.chomp
       log("AFW::Cloudstack-agent: Preserving chain '#{chain}' in table #{nftable}")
       getchain = Chef::ShellOut.new("iptables -S #{chain} -t #{nftable}")
       getchain_ret = getchain.run_command

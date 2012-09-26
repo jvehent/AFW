@@ -6,10 +6,10 @@
 :OUTPUT ACCEPT [0:0]
 -A OUTPUT -o lo -j NOTRACK
 -A PREROUTING -i lo -j NOTRACK
-<% node[:afw][:tables][:raw][:chains].sort_by{|k| k}.each do |chain| -%>
+<% node['afw']['tables']['raw']['chains'].sort_by{|k| k}.each do |chain| -%>
 <%=chain%>
 <% end -%>
-<% node[:afw][:tables][:raw][:rules].each do |rule| -%>
+<% node['afw']['tables']['raw']['rules'].each do |rule| -%>
 <%=rule%>
 <% end -%>
 COMMIT
@@ -20,10 +20,10 @@ COMMIT
 :FORWARD ACCEPT [0:0]
 :OUTPUT ACCEPT [0:0]
 :POSTROUTING ACCEPT [0:0]
-<% node[:afw][:tables][:mangle][:chains].sort_by{|k| k}.each do |chain| -%>
+<% node['afw']['tables']['mangle']['chains'].sort_by{|k| k}.each do |chain| -%>
 <%=chain%>
 <% end -%>
-<% node[:afw][:tables][:mangle][:rules].each do |rule| -%>
+<% node['afw']['tables']['mangle']['rules'].each do |rule| -%>
 <%=rule%>
 <% end -%>
 COMMIT
@@ -32,10 +32,10 @@ COMMIT
 :PREROUTING ACCEPT [0:0]
 :POSTROUTING ACCEPT [0:0]
 :OUTPUT ACCEPT [0:0]
-<% node[:afw][:tables][:nat][:chains].sort_by{|k| k}.each do |chain| -%>
+<% node['afw']['tables']['nat']['chains'].sort_by{|k| k}.each do |chain| -%>
 <%=chain%>
 <% end -%>
-<% node[:afw][:tables][:nat][:rules].each do |rule| -%>
+<% node['afw']['tables']['nat']['rules'].each do |rule| -%>
 <%=rule%>
 <% end -%>
 COMMIT
@@ -52,45 +52,45 @@ COMMIT
 -A INPUT -p tcp --dport 22 -s 10.0.0.0/8 -j ACCEPT
 -A INPUT -p tcp --dport 22 -s 172.30.0.0/16 -j ACCEPT
 -A OUTPUT -p udp --dport 53 -d 10.0.0.0/8 -j ACCEPT
-<% node[:afw][:tables][:filter][:chains].sort_by{|k| k}.each do |chain| -%>
+<% node['afw']['tables']['filter']['chains'].sort_by{|k| k}.each do |chain| -%>
 <%=chain%>
 <% end -%>
 <% #build the list of chains, one per user
-node[:afw][:chains].sort_by{|k,v| k}.each do |user,params| -%>
+node['afw']['chains'].sort_by{|k,v| k}.each do |user,params| -%>
 
 :<%=user%> - [0:0]
--A OUTPUT -m owner --uid-owner <%=params[:uid]%> -m state --state NEW -j <%=user%>
+-A OUTPUT -m owner --uid-owner <%=params['uid']%> -m state --state NEW -j <%=user%>
 <%
-  node[:afw][:chains][user][:rules].sort_by{|k| k}.each do |rule|
+  node['afw']['chains'][user]['rules'].sort_by{|k| k}.each do |rule|
 -%>
 <%=rule%>
 <%end
-    if node[:afw][:enable_output_drop_log]
+    if node['afw']['enable_output_drop_log']
                             # log-prefix must be < 30 characters total -%>
 -A <%=user%> -j LOG --log-prefix "DROP_AFW_OUTPUT_<%=user[0,11]%> " --log-uid --log-tcp-sequence
 <% end
-   if node[:afw][:enable_output_drop] -%>
+   if node['afw']['enable_output_drop'] -%>
 -A <%=user%> -j DROP
 <% end -%>
 <%
 end
 -%>
 
-<% node[:afw][:tables][:filter][:rules].each do |rule| -%>
+<% node['afw']['tables']['filter']['rules'].each do |rule| -%>
 <%=rule%>
 <% end -%>
 
-<% if node[:afw][:enable_input_drop_log] -%>
+<% if node['afw']['enable_input_drop_log'] -%>
 -A INPUT -j LOG --log-prefix "DROP_AFW_INPUT " --log-uid --log-tcp-sequence
 <% end -%>
-<% if node[:afw][:enable_input_drop] -%>
+<% if node['afw']['enable_input_drop'] -%>
 -A INPUT -j DROP
 <% end -%>
 
-<% if node[:afw][:enable_output_drop_log] -%>
+<% if node['afw']['enable_output_drop_log'] -%>
 -A OUTPUT -j LOG --log-prefix "DROP_AFW_OUTPUT " --log-uid --log-tcp-sequence
 <% end -%>
-<% if node[:afw][:enable_output_drop] -%>
+<% if node['afw']['enable_output_drop'] -%>
 -A OUTPUT -j DROP
 
 <% end -%>

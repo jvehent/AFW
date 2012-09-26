@@ -9,15 +9,15 @@
 #
 
 # flush all stored compiled rules at chef-run, and regenerate them
-node[:afw][:chains] = {}
-node[:afw][:tables][:filter][:rules] = []
-node[:afw][:tables][:filter][:chains] = []
-node[:afw][:tables][:raw][:rules] = []
-node[:afw][:tables][:raw][:chains] = []
-node[:afw][:tables][:mangle][:rules] = []
-node[:afw][:tables][:mangle][:chains] = []
-node[:afw][:tables][:nat][:rules] = []
-node[:afw][:tables][:nat][:chains] = []
+node['afw']['chains'] = {}
+node['afw']['tables']['filter']['rules'] = []
+node['afw']['tables']['filter']['chains'] = []
+node['afw']['tables']['raw']['rules'] = []
+node['afw']['tables']['raw']['chains'] = []
+node['afw']['tables']['mangle']['rules'] = []
+node['afw']['tables']['mangle']['chains'] = []
+node['afw']['tables']['nat']['rules'] = []
+node['afw']['tables']['nat']['chains'] = []
 
 IP_CIDR_VALID_REGEX = /\b(?:\d{1,3}\.){3}\d{1,3}\b(\/[0-3]?[0-9])?/
 FQDN_VALID_REGEX = /^(?:(?:[0-9a-zA-Z_\-]+)\.){2,}(?:[0-9a-zA-Z_\-]+)$/
@@ -373,7 +373,6 @@ directory "/etc/firewall" do
   action :create
 end
 
-
 template "/etc/firewall/rules.iptables" do
   mode 0400
   owner "root"
@@ -385,11 +384,11 @@ package "iptables"
 execute "restore firewall" do
   command "iptables-restore < /etc/firewall/rules.iptables"
   action :nothing
-  if node[:afw][:enable]
+  if node['afw']['enable']
     subscribes :run,
                 resources(:template => "/etc/firewall/rules.iptables"),
                 :delayed
   else
-    Chef::Log.error "AFW: firewall will not be loaded. enable='#{node[:afw][:enable]}'"
+    Chef::Log.error "AFW: is disabled. enable='#{node['afw']['enable']}'"
   end
 end
