@@ -163,6 +163,33 @@ ip_list.each do |ip|
 end
 ```
 
+### Creating rules from external cookbooks
+If you want a cookbook to create firewal rules directly, as opposed to storing
+these rules in a roles, then you need to use the `create_rule()` function from
+the `AFW` module.
+Example: create outbound firewall rule for haproxy in the haproxy cookbook
+#### depend in AFW in the metadata
+`cookbooks/haproxy/metadata.rb`
+```
+[...]
+depends 'AFW'
+```
+#### create the rule from the recipe using ruby
+```
+ # Call the AFW module to create the rule
+ AFW.create_rule(node,
+                 "Haproxy outbound to #{destination}:#{port}",
+                 {'protocol' => 'tcp',
+                  'direction' => 'out',
+                  'user' => 'haproxy',
+                  'destination' => "#{destination}",
+                  'dport' => "#{port}"
+                 })
+```
+Note that `AFW.create_rule()` must be called from a normal section of ruby code
+directly (not from a `ruby_block`) to ensure that the rules are compiled at
+chef compile time. The AFW template will later (at runtime) populate these rules
+into the `iptables-restore` file.
 
 ### Predefined rules
 Predefined rules are iptables rules that are used directly by AFW. Those rules
