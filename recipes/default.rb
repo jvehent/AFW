@@ -1,4 +1,5 @@
 #
+# Author:: Julien Vehent
 # Cookbook Name:: afw
 # Recipe:: default
 #
