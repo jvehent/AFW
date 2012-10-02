@@ -190,7 +190,7 @@ module AFW
   end
 
 
-  def expand_sametag(search_string, name)
+  def expand_sametag(node, search_string, name)
     # Process the SAMETAG keyword, get a list of tags the node owns
     # and limit the firewall rules to sources/destinations that share those tags
     # If SAMETAG is present, but the node has no tags, a fake tag will be returned
@@ -245,13 +245,13 @@ module AFW
     if direction == "in"
       iptables_header = "-A INPUT "
       iptables_header << "-i #{interface}" unless interface.empty?
-      sources = expand_targets(source,options,name)
+      sources = expand_targets(node, source,options,name)
 
     # Outbound rules
     elsif direction == "out"
       iptables_header = "-A #{user}"
       iptables_header << " -o #{interface}" unless interface.empty?
-      destinations = expand_targets(destination,options,name)
+      destinations = expand_targets(node, destination,options,name)
     end
 
     iptables_header << " -p #{protocol}" unless protocol == 'all'
@@ -272,22 +272,22 @@ module AFW
   end
 
 
-  def expand_targets(criteria, options, name)
+  def expand_targets(node, criteria, options, name)
     # Check if the criteria is an array, and call `expands_ips` for each entry
     targets = []
     if criteria.kind_of?(Array)
       criteria.each do |target|
-        results = expand_ips(target, options, name)
+        results = expand_ips(node, target, options, name)
         targets |= results
       end
     else
-      targets = expand_ips(criteria, options, name)
+      targets = expand_ips(node, criteria, options, name)
     end
     return targets
   end
 
 
-  def expand_ips(target, options, name)
+  def expand_ips(node, target, options, name)
     # Take a search, an IP or a hostname and return an array of IPs
     ips = []
     if target =~ IP_CIDR_VALID_REGEX
@@ -303,10 +303,10 @@ module AFW
       search_string << ")"
 
       # If there is a sametag, it will be expanded
-      search_string = expand_sametag(search_string, name)
+      search_string = expand_sametag(node, search_string, name)
 
       # Add the environment scope of the search
-      search_string = expand_environment(search_string, options, name)
+      search_string = expand_environment(node, search_string, options, name)
       results = []
 
       # If running on Chef Solo, return an empty result
@@ -331,7 +331,7 @@ module AFW
   end
 
 
-  def expand_environment(search_string, options, name)
+  def expand_environment(node, search_string, options, name)
     # Check the options `disable_env_limit`
     # if used, the search that will be used to list sources and destinations
     # will not be limited to the current environment
