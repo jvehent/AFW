@@ -20,7 +20,7 @@ node['afw']['tables']['nat']['rules'] = []
 node['afw']['tables']['nat']['chains'] = []
 
 class Chef::Recipe
-  include AFWCore
+  include AFW
 end
 
 node['afw']['rules'].each do |name,params|

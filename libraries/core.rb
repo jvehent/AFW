@@ -1,4 +1,4 @@
-module AFWCore
+module AFW
 
   # IP dummy regex, from `0.0.0.0` to `999.999.999.999`
   IP_CIDR_VALID_REGEX = /\b(?:\d{1,3}\.){3}\d{1,3}\b(\/[0-3]?[0-9])?/
@@ -384,5 +384,22 @@ module AFWCore
     end
 
     return iptables_array_destination
+  end
+
+
+  #
+  # Exported to other cookbooks ----
+  #
+  module_function
+  extend self
+  def create_rule(node, name, params)
+    node['afw']['rules'][name] = params
+    # Wrapper around `process_rule`
+    #
+    Chef::Log.info("AFW.create_rule(): processing '#{name}'")
+    if AFW.process_rule(node, name, params)
+      Chef::Log.info("AFW.create_rule(): finished processing '#{name}'")
+    end
+    return true
   end
 end
