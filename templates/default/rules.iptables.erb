@@ -48,10 +48,6 @@ COMMIT
 -A OUTPUT -o lo -j ACCEPT
 -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 -A OUTPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
-# some default rules we want to open everywhere
--A INPUT -p tcp --dport 22 -s 10.0.0.0/8 -j ACCEPT
--A INPUT -p tcp --dport 22 -s 172.30.0.0/16 -j ACCEPT
--A OUTPUT -p udp --dport 53 -d 10.0.0.0/8 -j ACCEPT
 <% node['afw']['tables']['filter']['chains'].sort_by{|k| k}.each do |chain| -%>
 <%=chain%>
 <% end -%>
