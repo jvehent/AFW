@@ -313,8 +313,13 @@ module AFW
       if Chef::Config[:solo]
         Chef::Log.warn("Chef Solo does not support search.")
       else
-        results = Chef::Search::Query.new.search(:node, search_string
-                  ).first.map{|n| n['network']['lanip'] || BLACKHOLE_IP}
+        # Take some precautions in case the search comes back empty
+        s_results = Chef::Search::Query.new.search(:node, search_string).first.compact
+        if s_results.nil?
+          results = []
+        else
+          results = s_results.map{|n| n['network']['lanip'] || BLACKHOLE_IP}
+        end
       end
 
       if (results.count < 1) \
