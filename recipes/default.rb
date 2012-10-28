@@ -9,15 +9,15 @@
 #
 
 # flush all stored compiled rules at chef-run, and regenerate them
-node['afw']['chains'] = {}
-node['afw']['tables']['filter']['rules'] = []
-node['afw']['tables']['filter']['chains'] = []
-node['afw']['tables']['raw']['rules'] = []
-node['afw']['tables']['raw']['chains'] = []
-node['afw']['tables']['mangle']['rules'] = []
-node['afw']['tables']['mangle']['chains'] = []
-node['afw']['tables']['nat']['rules'] = []
-node['afw']['tables']['nat']['chains'] = []
+node.set['afw']['chains'] = {}
+node.set['afw']['tables']['filter']['rules'] = []
+node.set['afw']['tables']['filter']['chains'] = []
+node.set['afw']['tables']['raw']['rules'] = []
+node.set['afw']['tables']['raw']['chains'] = []
+node.set['afw']['tables']['mangle']['rules'] = []
+node.set['afw']['tables']['mangle']['chains'] = []
+node.set['afw']['tables']['nat']['rules'] = []
+node.set['afw']['tables']['nat']['chains'] = []
 
 class Chef::Recipe
   include AFW

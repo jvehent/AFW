@@ -72,10 +72,10 @@ module AFW
         return true
       end
       unless node['afw']['chains'].has_key?(user)
-        node['afw']['chains'][user] = {}
+        node.set['afw']['chains'][user] = {}
       end
-      node['afw']['chains'][user]['uid'] = uid
-      node['afw']['chains'][user]['rules'] = []
+      node.set['afw']['chains'][user]['uid'] = uid
+      node.set['afw']['chains'][user]['rules'] = []
     end
 
     # Rule preparation is done, launch the compilation and store in node attr
