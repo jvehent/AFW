@@ -24,9 +24,9 @@ class Chef::Recipe
 end
 
 node['afw']['rules'].each do |name,params|
-  log("AFW: processing rule '#{name}'")
+  Chef::Log.info("AFW: processing rule '#{name}'")
   if process_rule(node, name, params)
-    log("AFW: finished processing of rule '#{name}'")
+    Chef::Log.info("AFW: finished processing of rule '#{name}'")
   end
 end
 
