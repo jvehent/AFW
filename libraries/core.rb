@@ -244,13 +244,13 @@ module AFW
     # Inbound rules
     if direction == "in"
       iptables_header = "-A INPUT "
-      iptables_header << "-i #{interface}" unless interface.empty?
+      iptables_header << "-i #{interface}" unless interface.nil? or interface.empty?
       sources = expand_targets(node, source,options,name)
 
     # Outbound rules
     elsif direction == "out"
       iptables_header = "-A #{user}"
-      iptables_header << " -o #{interface}" unless interface.empty?
+      iptables_header << " -o #{interface}" unless interface.nil? or interface.empty?
       destinations = expand_targets(node, destination,options,name)
     end
 
@@ -318,7 +318,7 @@ module AFW
         if s_results.nil?
           results = []
         else
-          results = s_results.map{|n| n['network']['lanip'] || BLACKHOLE_IP}
+          results = s_results.map{|n| n['network']['lanip'] || n['ipaddress'] || BLACKHOLE_IP}
         end
       end
 
