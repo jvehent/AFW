@@ -411,7 +411,7 @@ module AFW
   module_function
   extend self
   def create_rule(node, name, params)
-    node['afw']['rules'][name] = params
+    node.default['afw']['rules'][name] = params
     # Wrapper around `process_rule`
     #
     Chef::Log.info("AFW.create_rule(): processing '#{name}'")

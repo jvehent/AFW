@@ -9,15 +9,15 @@
 #
 
 # flush all stored compiled rules at chef-run, and regenerate them
-node.set['afw']['chains'] = {}
-node.set['afw']['tables']['filter']['rules'] = []
-node.set['afw']['tables']['filter']['chains'] = []
-node.set['afw']['tables']['raw']['rules'] = []
-node.set['afw']['tables']['raw']['chains'] = []
-node.set['afw']['tables']['mangle']['rules'] = []
-node.set['afw']['tables']['mangle']['chains'] = []
-node.set['afw']['tables']['nat']['rules'] = []
-node.set['afw']['tables']['nat']['chains'] = []
+node.default['afw']['chains'] = {}
+node.default['afw']['tables']['filter']['rules'] = []
+node.default['afw']['tables']['filter']['chains'] = []
+node.default['afw']['tables']['raw']['rules'] = []
+node.default['afw']['tables']['raw']['chains'] = []
+node.default['afw']['tables']['mangle']['rules'] = []
+node.default['afw']['tables']['mangle']['chains'] = []
+node.default['afw']['tables']['nat']['rules'] = []
+node.default['afw']['tables']['nat']['chains'] = []
 
 class Chef::Recipe
   include AFW
@@ -82,8 +82,16 @@ service 'firewall' do
   action [:enable, :start]
 end
 
-execute "restore firewall" do
-  command "iptables-restore < /etc/firewall/rules.iptables"
+ruby_block 'cleanup_rules' do
+  block do
+    node.set['afw']['rules'] = {}
+    node.set['afw']['chains'] = {}
+    node.set['afw']['tables'] = {}
+  end
+end
+
+execute 'restore firewall' do
+  command 'iptables-restore < /etc/firewall/rules.iptables'
   action :nothing
   if node['afw']['enable']
     subscribes :run,
@@ -92,4 +100,5 @@ execute "restore firewall" do
   else
     Chef::Log.error "AFW: is disabled. enable='#{node['afw']['enable']}'"
   end
+  notifies :create, 'ruby_block[cleanup_rules]'
 end
