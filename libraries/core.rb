@@ -27,9 +27,12 @@ module AFW
       return true
     end
 
-    # if this entry has a full rule predefined, take it and go to the next entry
-    if rule_is_predefined?(name, params)
-      node['afw']['tables'][params['table']]['rules'].push(params['rule'])
+    # if this entry has a full rule predefined, store it and go to the next entry
+    if rule_is_predefined?(node, name, params)
+      if not node['afw']['tables'][params['table']]['rules'].include?(
+             params['rule'])
+        node['afw']['tables'][params['table']]['rules'].push(params['rule'])
+      end
       return true
     end
 
@@ -85,7 +88,7 @@ module AFW
   end
 
 
-  def rule_is_predefined?(name, params)
+  def rule_is_predefined?(node, name, params)
     if params.has_key?("rule") and params.has_key?("table")
       if ['nat','raw','mangle','filter'].include?(params['table'])
         unless node['afw']['tables'][params['table']]['rules'].include?(params['rule'])
