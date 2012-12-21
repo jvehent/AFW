@@ -32,20 +32,21 @@ node['afw']['rules'].each do |name,params|
   end
 end
 
-directory "/etc/firewall" do
-  owner "root"
-  group "root"
-  mode "0700"
+package 'iptables'
+
+directory '/etc/firewall' do
+  owner 'root'
+  group 'root'
+  mode '0700'
   action :create
 end
 
-template "/etc/firewall/rules.iptables" do
+template '/etc/firewall/rules.iptables' do
   mode 0400
-  owner "root"
-  group "root"
+  owner 'root'
+  group 'root'
 end
 
-package "iptables"
 cookbook_file '/etc/firewall/empty.iptables' do
   mode 0400
   owner 'root'
@@ -95,8 +96,8 @@ execute 'restore firewall' do
   action :nothing
   if node['afw']['enable']
     subscribes :run,
-                resources(:template => "/etc/firewall/rules.iptables"),
-                :delayed
+               resources(:template => '/etc/firewall/rules.iptables'),
+               :delayed
   else
     Chef::Log.error "AFW: is disabled. enable='#{node['afw']['enable']}'"
   end

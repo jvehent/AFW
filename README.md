@@ -13,7 +13,7 @@ AFW support `raw` rules, that are just straight `iptables` syntax passed to the
 template. For these, Chef searches are not supported, but it gives you access
 to the full set of features `iptables` provides.
 
-AFW runs on any Linux 2.6 or 3.*. It does not rely on distribution specific
+AFW runs on any Linux 2.6 or 3.x. It does *not* rely on distribution specific
 wrapper, such as ufw for ubuntu, but calls `iptables-restore` directly.
 
 ## Rules definitions
