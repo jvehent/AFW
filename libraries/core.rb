@@ -297,8 +297,10 @@ module AFW
       # target is just a single ip or network
       ips.push(target)
     elsif target =~ FQDN_VALID_REGEX
-      # target is a fqdn, that's valid too
-      ips.push(target)
+      # target is a fqdn, that's valid too, but transform it into an IP
+      require 'socket'
+      ip = IPSocket.getaddress(target)
+      ips.push(ip)
     else
       # target isn't an ip, let's try to resolve a search with it
       search_string = "("
