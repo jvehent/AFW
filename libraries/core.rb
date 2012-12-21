@@ -50,14 +50,14 @@ module AFW
     source          = params.fetch('source', [])
     dport           = params['dport'] if params.has_key?('dport')
     sport           = params['sport'] if params.has_key?('sport')
-    interface       = node['afw']['default_iface'] || node['network']['laniface']
+    interface       = ''
     if params.has_key?('interface')
       interface = case params['interface']
-                  when 'default' then interface
+                  when 'default' then ''
                   when 'all' then ''
                   else
                     if node['network']['interfaces'].has_key?(params['interface'])
-                      params['interface']
+                      params['interface'].split(':').first
                     end
                   end
     end
@@ -243,14 +243,14 @@ module AFW
 
     # Inbound rules
     if direction == "in"
-      iptables_header = "-A INPUT "
-      iptables_header << "-i #{interface}" unless interface.nil? or interface.empty?
+      iptables_header = "-A INPUT"
+      iptables_header << " -i #{interface}" unless interface.empty?
       sources = expand_targets(node, source,options,name)
 
     # Outbound rules
     elsif direction == "out"
       iptables_header = "-A #{user}"
-      iptables_header << " -o #{interface}" unless interface.nil? or interface.empty?
+      iptables_header << " -o #{interface}" unless interface.empty?
       destinations = expand_targets(node, destination,options,name)
     end
 

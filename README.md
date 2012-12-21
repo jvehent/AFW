@@ -80,8 +80,8 @@ Set the destination port of the connections being filtered. This is mandatory.
 Except when it's not (eg. icmp).
 
 * __interface__ (*optional*):
-Select the network interface. If undef, the default interface will be used.
-if `all`, the interface parameter won't be set at all.
+Select the network interface. If absent of set to `all`, the interface
+parameter won't be set at all, setting the rule on all interfaces.
 
 * __source__ (__mandatory for `in` rules__):
 Set the source IP of the packets. This parameter can either be a single IP or
