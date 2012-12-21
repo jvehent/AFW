@@ -44,6 +44,41 @@ template "/etc/firewall/rules.iptables" do
 end
 
 package "iptables"
+cookbook_file '/etc/firewall/empty.iptables' do
+  mode 0400
+  owner 'root'
+  group 'root'
+  source 'empty.iptables'
+end
+
+case node[:platform]
+  when 'ubuntu'
+    cookbook_file '/etc/init/firewall.conf' do
+      owner 'root'
+      group 'root'
+      mode 0600
+      source 'upstart-firewall.conf'
+    end
+  else
+    cookbook_file '/etc/init.d/firewall' do
+      owner 'root'
+      group 'root'
+      mode 0750
+      source 'initd-firewall'
+    end
+end
+
+service 'firewall' do
+  case node[:platform]
+    when 'ubuntu'
+      if node[:platform_version].to_f >= 9.10
+        provider Chef::Provider::Service::Upstart
+      else
+        priority(99)
+      end
+  end
+  action [:enable, :start]
+end
 
 execute "restore firewall" do
   command "iptables-restore < /etc/firewall/rules.iptables"
