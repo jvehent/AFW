@@ -41,8 +41,10 @@ module AFW
     if options.include?('disable_syntax_check')
       Chef::Log.info("AFW: disabling syntax checking for rule '#{name}'")
     else
-      # grammar check
-      rule_validation(node, name,params)
+      # grammar check, skip rule if doesn't pass
+      if not rule_validation(node, name,params)
+        return false
+      end
     end
 
     # Parse the parameters of the rules into separate variable
@@ -132,10 +134,13 @@ module AFW
       when 'default' then true
       when 'all' then true
       else
-        unless node['network']['interfaces'].has_key?(rule_params['interface'])
-          raise ArgumentError,
-                "Invalid Interface '#{rule_params['interface']}' in rule '#{name}'",
-                caller
+        if node['network']['interfaces'].has_key?(rule_params['interface'])
+        then true
+        else
+          # If the interface doesn't exist, log and skip the current rule
+          Chef::Log.info("AFW: Unknown interface '#{rule_params['interface']}'" +
+                         " in rule '#{name}'.")
+          return false
         end
       end
     end
@@ -181,6 +186,9 @@ module AFW
         end
       end
     end
+
+    # validation succeeded
+    return true
   end
 
 
@@ -409,6 +417,8 @@ module AFW
     Chef::Log.info("AFW.create_rule(): processing '#{name}'")
     if AFW.process_rule(node, name, params)
       Chef::Log.info("AFW.create_rule(): finished processing '#{name}'")
+    else
+      Chef::Log.info("AFW.create_rule(): rule '#{name}' failed. Skipping it.")
     end
     return true
   end
