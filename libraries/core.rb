@@ -120,7 +120,7 @@ module AFW
             caller
     end
 
-    unless rule_params['protocol'] =~ /tcp|udp|icmp|vrrp|all/
+    unless rule_params['protocol'] =~ /tcp|udp|icmp|vrrp|ospf|all/
       raise ArgumentError,
             "Invalid Protocol '#{rule_params['protocol']}' in rule '#{name}'",
             caller
