@@ -269,9 +269,13 @@ module AFW
     iptables_header << " --sport #{sport}" if sport
     iptables_header << " --dport #{dport}" if dport
 
+    rule_comment = ""
+    rule_comment = name unless not node['afw']['use_rule_comments']
+
     iptables_rules = build_rule_array(iptables_header,
                                       sources,
-                                      destinations)
+                                      destinations,
+                                      rule_comment)
 
     # the rules are built, store them in the node attributes
     iptables_rules.each do |iptables_rule|
@@ -362,7 +366,7 @@ module AFW
   end
 
 
-  def build_rule_array(iptables_header, sources, destinations)
+  def build_rule_array(iptables_header, sources, destinations, comment)
     # iterate through the lists of resolved sources and destinations and
     # build as many rules as needed into `iptables_array_destination`
     iptables_array_source = []
@@ -382,19 +386,28 @@ module AFW
       iptables_array_source.push(iptables_header)
     end
 
+    comment_opts = ""
+    if comment
+        # "Quotes" in rule names seem unlikely, but just in case:
+        comment_str = comment.gsub(/"/, '\"')  
+        comment_opts = " -m comment --comment \"#{comment_str}\""
+    end
+
     if destinations.count > 0
       destinations.each do |this_dest|
         iptables_array_source.each do |iptables_source|
           iptables_array_destination.push(
             "#{iptables_source} -d #{this_dest} " +
-            "-m conntrack --ctstate NEW -j ACCEPT"
+            "-m conntrack --ctstate NEW -j ACCEPT" +
+            comment_opts
           )
         end
       end
     else
       iptables_array_source.each do |iptables_source|
         iptables_array_destination.push(
-          "#{iptables_source} -m conntrack --ctstate NEW -j ACCEPT"
+          "#{iptables_source} -m conntrack --ctstate NEW -j ACCEPT" + 
+          comment_opts
         )
         Chef::Log.info("AFW: building rule '#{iptables_source} " +
             "-m conntrack --ctstate NEW -j ACCEPT'")
