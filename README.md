@@ -27,7 +27,7 @@ Rules must be added in roles or nodes attributes. A typical rule looks like:
       :direction => 'in',
       :interface => 'default',
       :user => 'mongodb',
-      :source => ['(roles:*nodejs-app-node OR roles:*python-worker-node OR roles:*python-api-node) AND SAMETAG',
+      :source => ['(roles:*webserver-node OR roles:*database-node OR roles:*api-node) AND SAMETAG',
                   '10.4.76.2',
                   'backup-server.example.net']
       :dport => '27017'
@@ -347,7 +347,7 @@ suppose to be sent.
 # ATTRIBUTES
 
 * `default[:afw][:enable] = true` : enable or disable the firewall restore
-command. If set the false, the rules will still be populated in 
+command. If set the false, the rules will still be populated in
 `/etc/firewall/rules.iptables` but the restore command will not be issued.
 
 * `default[:afw][:enable_input_drop] = true` : DROP all input packets by defaut
