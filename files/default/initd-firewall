@@ -1,4 +1,7 @@
-#!/bin/sh -e
+#!/bin/bash
+# afw   iptables firewall init script
+# chkconfig: 2345 65 90
+# description: iptables firewall script
 ### BEGIN INIT INFO
 # Provides:          firewall
 # Required-Start:    networking $local_fs
@@ -10,53 +13,40 @@
 # Short-Description: Controls the firewall
 ### END INIT INFO
 
-PATH="/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin"
-
 [ -x /sbin/iptables-restore ] || exit 0
-
-. /lib/lsb/init-functions
 
 RULESET="/etc/firewall/rules.iptables"
 EMPTYSET="/etc/firewall/empty.iptables"
 
 case "$1" in
-start)
-  log_action_begin_msg "Enabling the firewall"
-  if /sbin/iptables-restore < $RULESET; then
-      log_action_end_msg $?
-  else
-      log_action_end_msg $?
-  fi
-  ;;
+  start|reload|restart)
+    echo -n "Enabling the firewall: "
+    if /sbin/iptables-restore < $RULESET; then
+      echo "OK"
+    else
+      echo "Failed ! $?"
+    fi
+    ;;
 
-stop)
-  log_action_begin_msg "Disabling the firewall"
-  if /sbin/iptables-restore < $EMPTYSET; then
-      log_action_end_msg $?
-  else
-      log_action_end_msg $?
-  fi
-  ;;
+  stop)
+    echo -n "Disabling the firewall:"
+    if /sbin/iptables-restore < $EMPTYSET; then
+      echo "OK"
+    else
+      echo "Failed ! $?"
+    fi
+    ;;
 
-reload|restart)
-  log_action_begin_msg "Reloading the firewall"
-  if /sbin/iptables-restore < $RULESET; then
-      log_action_end_msg $?
-  else
-      log_action_end_msg $?
-  fi
-  ;;
+  status)
+    /sbin/iptables -L -n -v
+    /sbin/iptables -L -t nat -n -v
+    /sbin/iptables -L -t mangle -n -v
+    ;;
 
-status)
-  /sbin/iptables -L -n -v
-  /sbin/iptables -L -t nat -n -v
-  /sbin/iptables -L -t mangle -n -v
-  ;;
-
-*)
-  echo "Usage: /etc/init.d/firewall {start|stop}"
-  exit 1
-  ;;
+  *)
+    echo "Usage: /etc/init.d/firewall {start|stop|reload|restart|status}"
+    exit 1
+    ;;
 esac
 
 exit 0

@@ -305,10 +305,23 @@ module AFW
       # target is just a single ip or network
       ips.push(target)
     elsif target =~ FQDN_VALID_REGEX
-      # target is a fqdn, that's valid too, but transform it into an IP
-      require 'socket'
-      ip = IPSocket.getaddress(target)
-      ips.push(ip)
+      # target is a fqdn, that's valid too, but resolve it into an
+      # array of IPs, and push each IP into the list
+      begin
+        require 'dnsruby'
+        resolver = Dnsruby::Resolver.new
+        response = resolver.query(target)
+        response.each_resource do |r|
+          if r.type.eql?('A')
+            ips.push(r.address)
+          end
+        end
+      rescue LoadError
+        # fall back to builtin dns resolution
+        require 'socket'
+        ip = IPSocket.getaddress(target)
+        ips.push(ip)
+      end
     else
       # target isn't an ip, let's try to resolve a search with it
       search_string = "("

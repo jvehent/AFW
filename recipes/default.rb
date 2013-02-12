@@ -23,6 +23,12 @@ class Chef::Recipe
   include AFW
 end
 
+package 'iptables'
+
+gem_package 'dnsruby' do
+  action :install
+end
+
 node['afw']['rules'].each do |name,params|
   Chef::Log.info("AFW: processing rule '#{name}'")
   if process_rule(node, name, params)
@@ -31,8 +37,6 @@ node['afw']['rules'].each do |name,params|
     Chef::Log.info("AFW: rule '#{name}' failed. Skipping it.")
   end
 end
-
-package 'iptables'
 
 directory '/etc/firewall' do
   owner 'root'
