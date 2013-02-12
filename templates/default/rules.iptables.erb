@@ -61,14 +61,6 @@ node['afw']['chains'].sort_by{|k,v| k}.each do |user,params| -%>
 -%>
 <%=rule%>
 <%end
-    if node['afw']['enable_output_drop_log']
-                            # log-prefix must be < 30 characters total -%>
--A <%=user%> -j LOG --log-prefix "DROP_AFW_OUTPUT_<%=user[0,11]%> " --log-uid --log-tcp-sequence
-<% end
-   if node['afw']['enable_output_drop'] -%>
--A <%=user%> -j DROP
-<% end -%>
-<%
 end
 -%>
 
