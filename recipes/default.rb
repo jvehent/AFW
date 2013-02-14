@@ -25,8 +25,15 @@ end
 
 package 'iptables'
 
-gem_package 'dnsruby' do
-  action :install
+if node['afw']['ruby_source'] == 'gempackage'
+  gem_package 'dnsruby' do
+    action :install
+  end
+elsif node['afw']['ruby_source'] == 'package'
+  package 'dnsruby' do
+    package_name node['afw']['dnsruby_package_name']
+    action :install
+  end
 end
 
 node['afw']['rules'].each do |name,params|
