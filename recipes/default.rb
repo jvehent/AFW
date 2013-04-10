@@ -65,7 +65,7 @@ cookbook_file '/etc/firewall/empty.iptables' do
   source 'empty.iptables'
 end
 
-case node[:platform]
+case node['platform']
   when 'ubuntu'
     cookbook_file '/etc/init/firewall.conf' do
       owner 'root'
@@ -83,9 +83,9 @@ case node[:platform]
 end
 
 service 'firewall' do
-  case node[:platform]
+  case node['platform']
     when 'ubuntu'
-      if node[:platform_version].to_f >= 9.10
+      if node['platform_version'].to_f >= 9.10
         provider Chef::Provider::Service::Upstart
       else
         priority(99)
