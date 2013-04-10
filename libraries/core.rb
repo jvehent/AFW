@@ -29,9 +29,9 @@ module AFW
 
     # if this entry has a full rule predefined, store it and go to the next entry
     if rule_is_predefined?(node, name, params)
-      if not node['afw']['tables'][params['table']]['rules'].include?(
-             params['rule'])
-        node['afw']['tables'][params['table']]['rules'].push(params['rule'])
+      existing = node['afw']['tables'][params['table']]['rules']
+      if not existing.include?(params['rule'])
+        node.normal['afw']['tables'][params['table']]['rules'] = existing.to_a + [params['rule']]
       end
       return true
     end
@@ -279,9 +279,10 @@ module AFW
 
     # the rules are built, store them in the node attributes
     iptables_rules.each do |iptables_rule|
-      unless node['afw']['chains'][user]['rules'].include?(iptables_rule)
+      existing = node['afw']['chains'][user]['rules']
+      unless existing.include?(iptables_rule)
         Chef::Log.info("AFW: storing rule '#{iptables_rule}'")
-        node['afw']['chains'][user]['rules'].push(iptables_rule)
+        node.normal['afw']['chains'][user]['rules'] = existing.to_a + [iptables_rule]
       end
     end
   end
@@ -402,7 +403,7 @@ module AFW
     comment_opts = ""
     if comment
         # "Quotes" in rule names seem unlikely, but just in case:
-        comment_str = comment.gsub(/"/, '\"')  
+        comment_str = comment.gsub(/"/, '\"')
         comment_opts = " -m comment --comment \"#{comment_str}\""
     end
 
@@ -419,7 +420,7 @@ module AFW
     else
       iptables_array_source.each do |iptables_source|
         iptables_array_destination.push(
-          "#{iptables_source} -m conntrack --ctstate NEW -j ACCEPT" + 
+          "#{iptables_source} -m conntrack --ctstate NEW -j ACCEPT" +
           comment_opts
         )
         Chef::Log.info("AFW: building rule '#{iptables_source} " +
