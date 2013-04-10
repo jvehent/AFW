@@ -17,3 +17,14 @@ default['afw']['tables']['mangle']['rules'] = []
 default['afw']['tables']['mangle']['chains'] = []
 default['afw']['tables']['nat']['rules'] = []
 default['afw']['tables']['nat']['chains'] = []
+
+default['afw']['ruby_source'] = "gempackage"
+#default['afw']['ruby_source'] = "package"
+#default['afw']['ruby_source'] = "none"
+
+case platform
+when "centos","redhat","fedora"
+  set['afw']['dnsruby_package_name'] = "rubygem-dnsruby"
+when "debian","ubuntu"
+  set['afw']['dnsruby_package_name'] = "ruby-dnsruby"
+end
