@@ -191,6 +191,25 @@ directly (not from a `ruby_block`) to ensure that the rules are compiled at
 chef compile time. The AFW template will later (at runtime) populate these rules
 into the `iptables-restore` file.
 
+#### preventing rule cleanup
+
+The rules on the Chef server node object will be removed upon successfull execution 
+of the cookbook. The point of cleaning up is to avoid stale rules that could be 
+deleted from the definitions (roles & cookbooks) but survive in the node attributes 
+forever.
+
+You can change this behaviour. One of the scenarios where you would like to do so 
+would be applying the rules from outside of cookbooks, with an 
+external tool perhaps.
+
+To disable automatic cleanup simply set this on the node:
+
+```
+node['afw']['disable_cleanup'] = "the value does not matter"
+```
+
+**Please remember:** You will have to remove unwanted rules manually.
+
 ### Predefined rules
 Predefined rules are iptables rules that are used directly by AFW. Those rules
 are used for specific purposes only, such as using a very particular module for

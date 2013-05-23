@@ -100,6 +100,7 @@ ruby_block 'cleanup_rules' do
     node.set['afw']['chains'] = {}
     node.set['afw']['tables'] = {}
   end
+  only_if { not node['afw'].has_key?('disable_cleanup') }
 end
 
 execute 'restore firewall' do
