@@ -205,7 +205,7 @@ external tool perhaps.
 To disable automatic cleanup simply set this on the node:
 
 ```
-node['afw']['disable_cleanup'] = "the value does not matter"
+node['afw']['enable_rules_cleanup'] = false
 ```
 
 **Please remember:** You will have to remove unwanted rules manually.

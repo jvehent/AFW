@@ -22,6 +22,8 @@ default['afw']['ruby_source'] = "gempackage"
 #default['afw']['ruby_source'] = "package"
 #default['afw']['ruby_source'] = "none"
 
+default['afw']['enable_rules_cleanup'] = true
+
 case platform
 when "centos","redhat","fedora"
   set['afw']['dnsruby_package_name'] = "rubygem-dnsruby"
