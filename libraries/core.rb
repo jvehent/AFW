@@ -194,7 +194,7 @@ module AFW
 
   def check_port(port, name)
     # check a (s|d)port against a regex
-    unless port =~ PORT_VALID_REGEX
+    unless port.to_s =~ PORT_VALID_REGEX
       raise ArgumentError, "Invalid Port '#{port}' in rule '#{name}'", caller
     end
     return true
