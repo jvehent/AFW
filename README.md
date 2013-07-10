@@ -85,7 +85,7 @@ parameter won't be set at all, setting the rule on all interfaces.
 
 * __source__ (__mandatory for `in` rules__):
 Set the source IP of the packets. This parameter can either be a single IP or
-network (eg. `10.1.2.0/32`), a Fully Qualified Domain Name (eg. `bob.colo.lair`)
+network (eg. `10.1.2.0/32`), a Fully Qualified Domain Name (eg. `bob.mydomain.com`)
  or a Chef Search (eg. `roles:mongodb`).
 By default, searches are limited to the same `chef_environment` (eg. staging),
 to allow for firewall rules that open connections between environments, you
