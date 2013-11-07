@@ -36,6 +36,7 @@ elsif node['afw']['ruby_source'] == 'package'
   end
 end
 
+node.default['afw']['rules'] ||= {}
 node['afw']['rules'].each do |name,params|
   Chef::Log.info("AFW: processing rule '#{name}'")
   if process_rule(node, name, params)
