@@ -316,7 +316,7 @@ module AFW
         require 'dnsruby'
         resolver = Dnsruby::Resolver.new
         response = resolver.query(target)
-        response.each_resource do |r|
+        response.each_answer do |r|
           if r.type.eql?('A')
             ips.push(r.address)
           end
