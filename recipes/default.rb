@@ -106,13 +106,20 @@ end
 
 execute 'restore firewall' do
   command 'iptables-restore < /etc/firewall/rules.iptables'
-  action :nothing
   if node['afw']['enable']
-    subscribes :run,
-               resources(:template => '/etc/firewall/rules.iptables'),
-               :delayed
+    if node['afw']['always_update']
+      action :run
+    else
+      action :nothing
+      subscribes :run,
+                 resources(:template => '/etc/firewall/rules.iptables'),
+                 :delayed
+    end
   else
+    action :nothing
     Chef::Log.error "AFW: is disabled. enable='#{node['afw']['enable']}'"
   end
   notifies :create, 'ruby_block[cleanup_rules]'
 end
+
+
