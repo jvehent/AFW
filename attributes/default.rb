@@ -6,6 +6,9 @@ default['afw']['enable_output_drop_log'] = true
 # Passes -m comment --comment "Rule Name Here" to iptables
 # On some platforms, you might need to load ipt_comment or xt_comment modules
 default['afw']['use_rule_comments'] = true
+# If always_update is true, the iptables rules will be reloaded on every chef
+# run, even if nothing has changed
+default['afw']['always_update'] = true
 
 # Default attributes, do not modify
 default['afw']['missing_user'] = false
